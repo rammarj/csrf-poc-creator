@@ -1,7 +1,6 @@
 
 package burp;
 
-import com.i0sec.utils.*;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
