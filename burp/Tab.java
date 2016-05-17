@@ -1,7 +1,6 @@
 
 package burp;
 
-import burp.ITab;
 import java.awt.Component;
 /**
  *

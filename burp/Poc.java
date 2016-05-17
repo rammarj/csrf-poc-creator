@@ -10,14 +10,14 @@ public interface Poc {
     static final byte OTHER = 3;
     
     /**
-     * Retrieve the PoC code.
+     * Returns the PoC code.
      * @return the PoC code.
      * @throws java.lang.Exception
      * @see #getType() 
      */
     public byte[] getPoc() throws Exception;
     /**
-     * Retrieves the PoC type.
+     * Returns the PoC type.
      * @return the PoC type.
      * @see #getPoc() 
      */

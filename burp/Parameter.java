@@ -1,7 +1,6 @@
 
 package burp;
 
-import burp.IParameter;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
@@ -39,7 +38,6 @@ public class Parameter implements IParameter, Cloneable {
         this.name = "";
         this.value = "";
     }
-
     /**
      * Deprecated
      * Deprecated. Use {@link #getParameterType() } instead.

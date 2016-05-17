@@ -1,4 +1,3 @@
-
 package burp;
 
 import java.awt.BorderLayout;
@@ -23,96 +22,102 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
-
 /**
- * CSRF POC Creator plugin for Burp Suite
+ * CSRF POC Creator extension for Burp Suite
  * @author Joaquin R. Martinez <joaquin.ramirez.mtz.lab@gmail.com>
  */
 public class BurpExtender implements IBurpExtender, IContextMenuFactory, ActionListener {
 
-    private IBurpExtenderCallbacks callbacks;
-    private IExtensionHelpers helpers;
-    private PocTabManager manager;
-    private IContextMenuInvocation icmi;
-    private final JMenuItem item;
-    private int count;
-
+    private IBurpExtenderCallbacks iex_callbacks;
+    private IExtensionHelpers iex_helpers;
+    private PocTabManager poc_tab_manager;
+    private IContextMenuInvocation ic_menu_inv;
+    private final JMenuItem send_menu_item;
+    private int tab_count;
+    private LinkedList<JMenuItem> menu_items;
+    /**Initialize all variables needed*/
     public BurpExtender() {
-        this.item = new JMenuItem("send to CSRF PoC Creator");
-        this.count = 1;
-        this.item.addActionListener(this);
+        this.menu_items = new LinkedList<>();
+        this.send_menu_item = new JMenuItem("send to CSRF PoC Creator");
+        this.send_menu_item.addActionListener(this);
+        menu_items.add(this.send_menu_item);
+        this.tab_count = 1;
     }
-
     @Override
     public void registerExtenderCallbacks(IBurpExtenderCallbacks ibec) {
-        this.callbacks = ibec;
-        this.helpers = ibec.getHelpers();
-        this.manager = new PocTabManager();
+        this.iex_callbacks = ibec;
+        this.iex_helpers = ibec.getHelpers();
+        this.poc_tab_manager = new PocTabManager();
         ibec.registerContextMenuFactory(this);
         ibec.setExtensionName("CSRF PoC Creator");
-        this.callbacks.addSuiteTab(new Tab("CSRF PoC", this.manager));
+        this.iex_callbacks.addSuiteTab(new Tab("CSRF PoC", this.poc_tab_manager));
     }
-
     @Override
     public List<JMenuItem> createMenuItems(IContextMenuInvocation icmi) {
-        this.icmi = icmi;
+        this.ic_menu_inv = icmi;
         byte invocation_context = icmi.getInvocationContext();
         if (invocation_context == IContextMenuInvocation.CONTEXT_MESSAGE_VIEWER_REQUEST
                 || invocation_context == IContextMenuInvocation.CONTEXT_PROXY_HISTORY
                 || invocation_context == IContextMenuInvocation.CONTEXT_MESSAGE_EDITOR_REQUEST) {
-            LinkedList<JMenuItem> items = new LinkedList<>();
-            items.add(this.item);
-            return items;
+            return menu_items;
         }
         return null;
     }
-
+    /**This method is executed when the "send to csrf ..." was clicked*/
     @Override
     public void actionPerformed(ActionEvent e) {
-        IHttpRequestResponse[] selectedMessages = this.icmi.getSelectedMessages();
+        IHttpRequestResponse[] selectedMessages = this.ic_menu_inv.getSelectedMessages();
         for (IHttpRequestResponse ihrr : selectedMessages) {
             try {
                 AjaxPoc PoC = new AjaxPoc(ihrr);
-                this.manager.addTab(String.valueOf((this.count++)), ihrr, PoC.getPoc());                
+                this.poc_tab_manager.addTab(String.valueOf((this.tab_count++)), ihrr, PoC.getPoc());
             } catch (Exception ex) {
-                JOptionPane.showMessageDialog(null, ex.getMessage());
+                JOptionPane.showMessageDialog(this.poc_tab_manager, ex.getMessage());
             }
         }
     }
-
-    class PocTabManager extends JTabbedPane {
-
+    /**
+     * Creates the CSRF POC CREATOR tab
+     */
+    private class PocTabManager extends JTabbedPane {
+        /**Ads a new tab within this tab with all info about the poc
+         */
         public void addTab(String title, IHttpRequestResponse request, byte[] poc) {
             PocCreatorTab pocCreatorTab = new PocCreatorTab(request, poc);
             addTab(title, pocCreatorTab);
-            int index = getTabCount()-1;
+            int index = getTabCount() - 1;
             JPanel jPanel = new JPanel();
             jPanel.setOpaque(false);
-            jPanel.add(new JLabel(getTitleAt(index),getIconAt(index),JLabel.LEFT));
+            jPanel.add(new JLabel(getTitleAt(index), getIconAt(index), JLabel.LEFT));
             CloseIcon closeIcon = new CloseIcon();
             JButton jButton = new JButton(closeIcon);
             jButton.setPreferredSize(new Dimension(closeIcon.getIconWidth(), closeIcon.getIconHeight()));
             jButton.addActionListener((ActionEvent e) -> {
                 int indexOfTab = indexOfTab(title); //tabs title does not change
-                if (indexOfTab!=-1) {
+                if (indexOfTab != -1) {
                     removeTabAt(indexOfTab);
                 }
             });
             jPanel.add(jButton);
             setTabComponentAt(index, jPanel);
         }
-
     }
-/**
- * POC Creator tab
- */
-    class PocCreatorTab extends JPanel implements ActionListener {
+    /**
+     * POC Creator tab
+     */
+    private class PocCreatorTab extends JPanel implements ActionListener {
 
-        private ITextEditor createTextEditor;
-        private IMessageEditor createMessageEditor;
+        private ITextEditor text_editor;
+        private IMessageEditor message_editor;
         private JButton btn_save, btn_copy;//, btn_close;
-        private JFileChooser f;
+        private JFileChooser save_file_dialog;
 
+        /**
+         * Creates a new tab for a poc
+         *
+         * @param req the request to show on the left
+         * @param poc the poc code
+         */
         PocCreatorTab(IHttpRequestResponse req, byte[] poc) {
             super(new BorderLayout(10, 10));
             this.btn_save = new JButton("save to file");
@@ -120,20 +125,20 @@ public class BurpExtender implements IBurpExtender, IContextMenuFactory, ActionL
             this.btn_save.setForeground(Color.blue);
             this.btn_copy.addActionListener(this);
             this.btn_save.addActionListener(this);
-            this.f = new JFileChooser();
+            this.save_file_dialog = new JFileChooser();
             /*Create a TextEditor*/
-            this.createTextEditor = callbacks.createTextEditor();
+            this.text_editor = iex_callbacks.createTextEditor();
             /*Making our message editor great with burp normal popup menu*/
-            this.createMessageEditor = callbacks.createMessageEditor(new IMessageEditorController() {
+            this.message_editor = iex_callbacks.createMessageEditor(new IMessageEditorController() {
                 @Override
                 public IHttpService getHttpService() {
-                    IRequestInfo analyzeRequest = helpers.analyzeRequest(req);
+                    IRequestInfo analyzeRequest = iex_helpers.analyzeRequest(req);
                     return new IHttpServiceImpl(analyzeRequest);
                 }
 
                 @Override
                 public byte[] getRequest() {
-                    return createMessageEditor.getMessage();
+                    return message_editor.getMessage();
                 }
 
                 @Override
@@ -142,8 +147,8 @@ public class BurpExtender implements IBurpExtender, IContextMenuFactory, ActionL
                 }
             }, true);
             JSplitPane jSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
-            jSplitPane.add(this.createMessageEditor.getComponent());
-            jSplitPane.add(this.createTextEditor.getComponent());
+            jSplitPane.add(this.message_editor.getComponent());
+            jSplitPane.add(this.text_editor.getComponent());
             add("Center", jSplitPane);
             //buttons panel
             JPanel jPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
@@ -151,11 +156,14 @@ public class BurpExtender implements IBurpExtender, IContextMenuFactory, ActionL
             jPanel.add(this.btn_save);
             //add buttons to end
             add("South", jPanel);
-            this.createTextEditor.setText(poc);
-            this.createMessageEditor.setMessage(req.getRequest(), true);
-            callbacks.customizeUiComponent(this);//burp lookandfeel
+            this.text_editor.setText(poc);
+            this.message_editor.setMessage(req.getRequest(), true);
+            iex_callbacks.customizeUiComponent(this);//burp lookandfeel
         }
 
+        /**
+         * When a button is clicked into this tab
+         */
         @Override
         public void actionPerformed(ActionEvent e) {
             if (e.getSource() == this.btn_copy) {
@@ -165,18 +173,21 @@ public class BurpExtender implements IBurpExtender, IContextMenuFactory, ActionL
             }
         }
 
+        /**
+         * Passes the poc code to the system clipboard
+         */
         private void copy() {
-            Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(callbacks.getHelpers()
-                    .bytesToString(this.createTextEditor.getText())), null);
+            Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(iex_callbacks.getHelpers()
+                    .bytesToString(this.text_editor.getText())), null);
         }
 
         private void save() {
-            int showSaveDialog = this.f.showSaveDialog(this.createTextEditor.getComponent());
+            int showSaveDialog = this.save_file_dialog.showSaveDialog(this.text_editor.getComponent());
             if (showSaveDialog == JFileChooser.APPROVE_OPTION) {
                 try {
-                    File ff = this.f.getSelectedFile();
+                    File ff = this.save_file_dialog.getSelectedFile();
                     try (FileWriter osw = new FileWriter(ff); BufferedWriter bw = new BufferedWriter(osw)) {
-                        bw.write(callbacks.getHelpers().bytesToString(this.createTextEditor.getText()));
+                        bw.write(iex_callbacks.getHelpers().bytesToString(this.text_editor.getText()));
                         bw.flush();
                         osw.flush();
                     }
@@ -190,8 +201,15 @@ public class BurpExtender implements IBurpExtender, IContextMenuFactory, ActionL
     /**
      * Ajax CSRF POCs
      */
-    class AjaxPoc implements Poc {
+    private class AjaxPoc implements Poc {
+
         private final IHttpRequestResponse request;
+
+        /**
+         * Creates ajax pocs
+         *
+         * @param r the {@link IHttpRequestResponse} to work
+         */
         public AjaxPoc(IHttpRequestResponse r) {
             this.request = r;
         }
@@ -204,7 +222,7 @@ public class BurpExtender implements IBurpExtender, IContextMenuFactory, ActionL
             a.append("<body>").append(sep).append("    <script>\n      function submitRequest()").append(sep);
             a.append("      {").append(sep).append("        var xhr = new XMLHttpRequest();").append(sep);
             String method;
-            IRequestInfo info = helpers.analyzeRequest(this.request);
+            IRequestInfo info = iex_helpers.analyzeRequest(this.request);
             method = info.getMethod();
             a.append("        xhr.open(\"").append(method).append("\", \"");
 
@@ -213,7 +231,7 @@ public class BurpExtender implements IBurpExtender, IContextMenuFactory, ActionL
                 a.append("        xhr.send();\n");
             } else {
                 a.append(this.request.getUrl()).append("\", true);").append(sep);
-                String body = helpers.bytesToString(this.request.getRequest()).substring(info.getBodyOffset());
+                String body = iex_helpers.bytesToString(this.request.getRequest()).substring(info.getBodyOffset());
                 body = Util.escapeBackSlashes(body);
                 body = Util.escapeDoubleQuotes(body);
                 String accept = "xt/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8";

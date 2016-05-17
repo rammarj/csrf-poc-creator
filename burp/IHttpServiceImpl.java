@@ -1,8 +1,6 @@
 
 package burp;
 
-import burp.IHttpService;
-import burp.IRequestInfo;
 import java.net.URL;
 /**
  *
