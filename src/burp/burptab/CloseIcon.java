@@ -7,7 +7,7 @@ import java.awt.Graphics;
 import javax.swing.Icon;
 /**
  * Creates the tab close icon
- * @author Joaquin R. Martinez
+ * @author Joaquin R. Martinez <joaquin.ramirez.mtz.lab@gmail.com>
  */
 public class CloseIcon implements Icon {
     

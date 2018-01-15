@@ -9,12 +9,10 @@ import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 
 /**
- *
- * @author KMF
- */
-/**
  * Creates the CSRF POC CREATOR tab
+ * @author Joaquin R. Martinez <joaquin.ramirez.mtz.lab@gmail.com>
  */
+
 public class PocTabManager extends JTabbedPane {
 
     /**

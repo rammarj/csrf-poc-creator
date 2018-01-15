@@ -2,7 +2,7 @@
 package burp;
 /**
  * 
- * @author Joaquin R. Martinez
+ * @author Joaquin R. Martinez <joaquin.ramirez.mtz.lab@gmail.com>
  */
 public class Header extends Parameter{
     /**

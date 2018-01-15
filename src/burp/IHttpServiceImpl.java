@@ -4,7 +4,7 @@ package burp;
 import java.net.URL;
 /**
  *
- * @author Joaquin R. Martinez
+ * @author Joaquin R. Martinez <joaquin.ramirez.mtz.lab@gmail.com>
  */
 public class IHttpServiceImpl implements IHttpService {
 

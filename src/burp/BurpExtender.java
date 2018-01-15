@@ -1,6 +1,6 @@
 package burp;
 
-import burp.burptab.BurpTab;
+import burp.burptab.ITabImpl;
 import burp.burptab.PocCreatorTab;
 import burp.burptab.PocTabManager;
 import burp.pocs.Poc;
@@ -18,13 +18,13 @@ import javax.swing.JOptionPane;
  */
 public class BurpExtender implements IBurpExtender, IContextMenuFactory, ActionListener {
 
-    private IBurpExtenderCallbacks iexCallbacks;
+    private static IBurpExtenderCallbacks burpExtenderCallbacks;
     private PocTabManager pocTabManager;
     private IContextMenuInvocation icMenuInvocation;
     private final JMenuItem sendMenuItem;
     private int tabCount;
     private final LinkedList<JMenuItem> menuItems;
-    private Pocs pocs;
+    
     /**Initialize all variables needed*/
     public BurpExtender() {
         this.menuItems = new LinkedList<>();
@@ -36,12 +36,12 @@ public class BurpExtender implements IBurpExtender, IContextMenuFactory, ActionL
     
     @Override
     public void registerExtenderCallbacks(IBurpExtenderCallbacks ibec) {
-        this.iexCallbacks = ibec;
+        BurpExtender.burpExtenderCallbacks = ibec;
         this.pocTabManager = new PocTabManager();
         ibec.registerContextMenuFactory(this);
         ibec.setExtensionName("CSRF PoC Creator");
-        this.iexCallbacks.addSuiteTab(new BurpTab("CSRF PoC", this.pocTabManager));
-        this.pocs = new Pocs();
+        BurpExtender.burpExtenderCallbacks.addSuiteTab(new ITabImpl("CSRF PoC", this.pocTabManager));
+        Pocs.initialize();
     }
     
     @Override
@@ -64,13 +64,18 @@ public class BurpExtender implements IBurpExtender, IContextMenuFactory, ActionL
         IHttpRequestResponse[] selectedMessages = this.icMenuInvocation.getSelectedMessages();
         for (IHttpRequestResponse ihrr : selectedMessages) {
             try {
-                Poc poc = this.pocs.getPoc("Ajax");
-                byte[] pocContent = poc.getPoc(iexCallbacks.getHelpers(), ihrr);
-                PocCreatorTab pocCreatorTab = new PocCreatorTab(iexCallbacks, ihrr, pocContent);
+                Poc poc = Pocs.getPoc("Ajax");
+                byte[] pocContent = poc.getPoc(ihrr);
+                PocCreatorTab pocCreatorTab = new PocCreatorTab(ihrr, pocContent);
                 this.pocTabManager.addTab(String.valueOf((this.tabCount++)), pocCreatorTab);
             } catch (Exception ex) {
                 JOptionPane.showMessageDialog(this.pocTabManager, ex.getMessage());
             }
         }
     }
+
+    public static IBurpExtenderCallbacks getBurpExtenderCallbacks() {
+        return burpExtenderCallbacks;
+    }
+        
 }

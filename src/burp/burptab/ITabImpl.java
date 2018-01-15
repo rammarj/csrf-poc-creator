@@ -7,17 +7,17 @@ import java.awt.Component;
  *
  * @author Joaquin R. Martinez
  */
-public class BurpTab implements ITab, Cloneable{
+public class ITabImpl implements ITab, Cloneable{
 
     private Component contentComponent;
     private String tabString;
     
-    public BurpTab(String tabstring, Component ui) {
+    public ITabImpl(String tabstring, Component ui) {
         this.contentComponent = ui;
         this.tabString = tabstring;
     }
 
-    public BurpTab() {
+    public ITabImpl() {
         this.contentComponent = null;
         this.tabString = "";
     }    

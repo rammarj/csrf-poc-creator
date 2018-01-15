@@ -1,22 +1,23 @@
 
-package burp.pocs.types;
+package burp.pocs;
 
+import burp.BurpExtender;
 import burp.IExtensionHelpers;
 import burp.IHttpRequestResponse;
 import burp.IRequestInfo;
 import burp.Parameter;
 import burp.Util;
-import burp.pocs.Poc;
 
 /**
  * Ajax CSRF POCs
  * 
- * @author Joaquin R. Martinez
+ * @author Joaquin R. Martinez <joaquin.ramirez.mtz.lab@gmail.com>
  */
 public class AjaxPoc implements Poc {
 
     @Override
-    public byte[] getPoc(final IExtensionHelpers iexHelpers, final IHttpRequestResponse request) {
+    public byte[] getPoc(final IHttpRequestResponse request) {
+        IExtensionHelpers iexHelpers = BurpExtender.getBurpExtenderCallbacks().getHelpers();
         String lineSeparator = System.lineSeparator();
         StringBuilder pocString = new StringBuilder();
         pocString.append("<!DOCTYPE html>").append(lineSeparator);
@@ -79,8 +80,4 @@ public class AjaxPoc implements Poc {
         return pocString.toString().getBytes();
     }
     
-    @Override
-    public byte getType() {
-        return AjaxPoc.AJAX_POC;
-    }
 }
