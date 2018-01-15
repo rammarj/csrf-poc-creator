@@ -1,22 +1,23 @@
 
-package burp;
+package burp.burptab;
 
+import burp.ITab;
 import java.awt.Component;
 /**
  *
  * @author Joaquin R. Martinez
  */
-public class Tab implements ITab, Cloneable{
+public class BurpTab implements ITab, Cloneable{
 
     private Component contentComponent;
     private String tabString;
     
-    public Tab(String tabstring, Component ui) {
+    public BurpTab(String tabstring, Component ui) {
         this.contentComponent = ui;
         this.tabString = tabstring;
     }
 
-    public Tab() {
+    public BurpTab() {
         this.contentComponent = null;
         this.tabString = "";
     }    

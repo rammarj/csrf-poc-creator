@@ -1,5 +1,9 @@
 
-package burp;
+package burp.pocs;
+
+import burp.IExtensionHelpers;
+import burp.IHttpRequestResponse;
+
 /**
  * @author Joaquin R. Martinez
  */
@@ -11,11 +15,12 @@ public interface Poc {
     
     /**
      * Returns the PoC code.
+     * @param r {@link IHttpRequestResponse} object to use.
      * @return the PoC code.
      * @throws java.lang.Exception
      * @see #getType() 
      */
-    public byte[] getPoc() throws Exception;
+    public byte[] getPoc(final IExtensionHelpers iexHelpers, final IHttpRequestResponse r) throws Exception;
     /**
      * Returns the PoC type.
      * @return the PoC type.

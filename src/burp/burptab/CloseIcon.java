@@ -1,5 +1,5 @@
 
-package burp;
+package burp.burptab;
 
 import java.awt.Color;
 import java.awt.Component;
