@@ -114,7 +114,9 @@ public class Util {
         return a;
     }
     /**
-     * 
+     * Converts a list of @{link IParameter} objects to a list of {@link Parameter} objects.
+     * @param p List od {@link IParameter} objects.
+     * @return a list of {@link Parameter} objects.
      */
     public static List<Parameter> toParameterList(List<IParameter> p){
         LinkedList<Parameter> a = new LinkedList<>();

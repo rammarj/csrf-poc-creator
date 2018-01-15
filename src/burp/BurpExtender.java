@@ -14,6 +14,7 @@ import javax.swing.JOptionPane;
 
 /**
  * CSRF POC Creator extension for Burp Suite
+ * 
  * @author Joaquin R. Martinez <joaquin.ramirez.mtz.lab@gmail.com>
  */
 public class BurpExtender implements IBurpExtender, IContextMenuFactory, ActionListener {
@@ -43,7 +44,11 @@ public class BurpExtender implements IBurpExtender, IContextMenuFactory, ActionL
         BurpExtender.burpExtenderCallbacks.addSuiteTab(new ITabImpl("CSRF PoC", this.pocTabManager));
         Pocs.initialize();
     }
-    
+    /**
+     * Creates the menu items shown in burp suite
+     * @param icmi the context menu invocation
+     * @return List of menu items
+     */
     @Override
     public List<JMenuItem> createMenuItems(IContextMenuInvocation icmi) {
         this.icMenuInvocation = icmi;
@@ -73,7 +78,11 @@ public class BurpExtender implements IBurpExtender, IContextMenuFactory, ActionL
             }
         }
     }
-
+    
+    /**
+     * Get the extender callback for this plugin
+     * @return the extender callbacks
+     */
     public static IBurpExtenderCallbacks getBurpExtenderCallbacks() {
         return burpExtenderCallbacks;
     }

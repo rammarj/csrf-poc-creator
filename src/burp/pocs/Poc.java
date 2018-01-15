@@ -13,7 +13,6 @@ public interface Poc {
      * @param r {@link IHttpRequestResponse} object to use.
      * @return the PoC code.
      * @throws java.lang.Exception
-     * @see #getType() 
      */
     public byte[] getPoc(final IHttpRequestResponse r) throws Exception;
     

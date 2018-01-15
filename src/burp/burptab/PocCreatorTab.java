@@ -27,6 +27,8 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Enumeration;
+import java.util.Iterator;
+import java.util.Set;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
@@ -51,7 +53,6 @@ public class PocCreatorTab extends JPanel implements ActionListener, ItemListene
     /**
      * Creates pocString new tab for pocString poc
      *
-     * @param iexCallbacks object to use
      * @param req the request to show on the left
      * @param poc the poc code
      */
@@ -65,12 +66,11 @@ public class PocCreatorTab extends JPanel implements ActionListener, ItemListene
         this.saveButton.addActionListener(PocCreatorTab.this);
         this.saveFileDialog = new JFileChooser();
         this.pocTypesCombo = new JComboBox<>();
-        Enumeration<String> pocKeys = Pocs.getPocKeys();
-        while (pocKeys.hasMoreElements()) {
-            String nextElement = pocKeys.nextElement();
-            this.pocTypesCombo.addItem(nextElement);
-        }
-        this.pocTypesCombo.addItemListener(this);
+        Iterator<String> pocKeys = Pocs.getPocKeys();
+        for (;pocKeys.hasNext();) {
+            this.pocTypesCombo.addItem(pocKeys.next());
+        }       
+        this.pocTypesCombo.addItemListener(PocCreatorTab.this);
         /*Create pocString TextEditor*/
         this.textEditor = BurpExtender.getBurpExtenderCallbacks().createTextEditor();
         /*Making our message editor great with burp normal popup menu*/
@@ -109,7 +109,8 @@ public class PocCreatorTab extends JPanel implements ActionListener, ItemListene
     }
 
     /**
-     * When pocString button is clicked into this tab
+     * When pocString button is clicked into this tab.
+     * @param e event argument.
      */
     @Override
     public void actionPerformed(ActionEvent e) {
@@ -130,6 +131,9 @@ public class PocCreatorTab extends JPanel implements ActionListener, ItemListene
         systemClipboard.setContents(new StringSelection(bytesToString), null);
     }
 
+    /**
+     * Handler for the 'save' button.
+     */
     private void save() {
         int showSaveDialog = this.saveFileDialog.showSaveDialog(this.textEditor.getComponent());
         if (showSaveDialog == JFileChooser.APPROVE_OPTION) {
