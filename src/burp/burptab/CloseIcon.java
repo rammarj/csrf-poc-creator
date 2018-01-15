@@ -20,12 +20,12 @@ public class CloseIcon implements Icon {
 
     @Override
     public int getIconWidth() {
-        return 17;
+        return 16;
     }
 
     @Override
     public int getIconHeight() {
-        return 17;
+        return 16;
     }
 
 }

@@ -25,7 +25,7 @@ public class PocTabManager extends JTabbedPane {
         int index = getTabCount() - 1;
         JPanel tabContainer = new JPanel();
         tabContainer.setOpaque(false);
-        tabContainer.add(new JLabel(getTitleAt(index), getIconAt(index), JLabel.LEFT));
+        tabContainer.add(new JLabel(title));
         CloseIcon closeIcon = new CloseIcon();
         JButton closeTabButton = new JButton(closeIcon);
         closeTabButton.setPreferredSize(new Dimension(closeIcon.getIconWidth(), closeIcon.getIconHeight()));
