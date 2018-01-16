@@ -52,6 +52,8 @@ public class BurpExtender implements IBurpExtender, IContextMenuFactory, ActionL
             this.sendMenu.add(item);
         }
         this.menuItems.add(this.sendMenu);
+        BurpExtender.burpExtenderCallbacks.printOutput("Burp csrf-poc-creator plugin for Burp Suite Free loaded!");
+        BurpExtender.burpExtenderCallbacks.printOutput("Created by @rammarj");
     }
     /**
      * Creates the menu items shown in burp suite
