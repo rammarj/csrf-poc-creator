@@ -126,4 +126,13 @@ public class Util {
         }
         return a;
     }
+    
+    /**
+     * Tries to encode some problematic HTML when adding to a form value or name.
+     * @param encode the string to encode.
+     * @return escaped problematic html chars.
+     */
+    public static String encodeHTML(String encode){
+        return encode.replace("\"", "&quot;");
+    }
 }

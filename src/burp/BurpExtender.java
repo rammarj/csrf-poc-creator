@@ -7,8 +7,10 @@ import burp.pocs.Poc;
 import burp.pocs.Pocs;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 
@@ -22,16 +24,14 @@ public class BurpExtender implements IBurpExtender, IContextMenuFactory, ActionL
     private static IBurpExtenderCallbacks burpExtenderCallbacks;
     private PocTabManager pocTabManager;
     private IContextMenuInvocation icMenuInvocation;
-    private final JMenuItem sendMenuItem;
+    private final JMenu sendMenu;
     private int tabCount;
     private final LinkedList<JMenuItem> menuItems;
     
     /**Initialize all variables needed*/
     public BurpExtender() {
         this.menuItems = new LinkedList<>();
-        this.sendMenuItem = new JMenuItem("send to CSRF PoC Creator");
-        this.sendMenuItem.addActionListener(BurpExtender.this);
-        menuItems.add(this.sendMenuItem);
+        this.sendMenu = new JMenu("send to CSRF PoC Creator");        
         this.tabCount = 1;        
     }
     
@@ -43,6 +43,15 @@ public class BurpExtender implements IBurpExtender, IContextMenuFactory, ActionL
         ibec.setExtensionName("CSRF PoC Creator");
         BurpExtender.burpExtenderCallbacks.addSuiteTab(new ITabImpl("CSRF PoC", this.pocTabManager));
         Pocs.initialize();
+        // add menus
+        Iterator<String> pocKeys = Pocs.getPocKeys();
+        while (pocKeys.hasNext()) {
+            String key = pocKeys.next();
+            JMenuItem item = new JMenuItem(key);
+            item.addActionListener(BurpExtender.this);
+            this.sendMenu.add(item);
+        }
+        this.menuItems.add(this.sendMenu);
     }
     /**
      * Creates the menu items shown in burp suite
@@ -69,9 +78,11 @@ public class BurpExtender implements IBurpExtender, IContextMenuFactory, ActionL
         IHttpRequestResponse[] selectedMessages = this.icMenuInvocation.getSelectedMessages();
         for (IHttpRequestResponse ihrr : selectedMessages) {
             try {
-                Poc poc = Pocs.getPoc("Ajax");
+                String actionCommand = e.getActionCommand();
+                Poc poc = Pocs.getPoc(actionCommand);
                 byte[] pocContent = poc.getPoc(ihrr);
                 PocCreatorTab pocCreatorTab = new PocCreatorTab(ihrr, pocContent);
+                pocCreatorTab.setSelectedItem(actionCommand);
                 this.pocTabManager.addTab(String.valueOf((this.tabCount++)), pocCreatorTab);
             } catch (Exception ex) {
                 JOptionPane.showMessageDialog(this.pocTabManager, ex.getMessage());

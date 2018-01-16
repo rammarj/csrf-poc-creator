@@ -4,7 +4,6 @@ package burp.pocs;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Set;
 
 /**
  * Contains all types of PoC's supported by this plugin.
@@ -19,7 +18,8 @@ public class Pocs {
      * Inaccesible constructor.
      */
     private Pocs() {
-        Pocs.POCS.put("Ajax",new AjaxPoc());    
+        Pocs.POCS.put("Ajax",new AjaxPoc()); 
+        Pocs.POCS.put("HTML",new HtmlPoc());
         // Add more kind of PoC's
     }            
 

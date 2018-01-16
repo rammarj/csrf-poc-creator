@@ -67,7 +67,7 @@ public class PocCreatorTab extends JPanel implements ActionListener, ItemListene
         this.saveFileDialog = new JFileChooser();
         this.pocTypesCombo = new JComboBox<>();
         Iterator<String> pocKeys = Pocs.getPocKeys();
-        for (;pocKeys.hasNext();) {
+        while (pocKeys.hasNext()) {
             this.pocTypesCombo.addItem(pocKeys.next());
         }       
         this.pocTypesCombo.addItemListener(PocCreatorTab.this);
@@ -163,4 +163,12 @@ public class PocCreatorTab extends JPanel implements ActionListener, ItemListene
         }        
     }
 
+    /**
+     * Sets the selected poc item.
+     * @param key the item.
+     */
+    public void setSelectedItem(String key){
+        this.pocTypesCombo.setSelectedItem(key);
+    }
+    
 }
