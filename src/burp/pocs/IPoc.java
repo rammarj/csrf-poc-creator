@@ -6,7 +6,7 @@ import burp.IHttpRequestResponse;
 /**
  * @author Joaquin R. Martinez <joaquin.ramirez.mtz.lab@gmail.com>
  */
-public interface Poc {
+public interface IPoc {
 
     /**
      * Returns the PoC code.

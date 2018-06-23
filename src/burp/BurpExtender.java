@@ -3,7 +3,6 @@ package burp;
 import burp.burptab.ITabImpl;
 import burp.burptab.PocCreatorTab;
 import burp.burptab.PocTabManager;
-import burp.pocs.Poc;
 import burp.pocs.Pocs;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -13,6 +12,7 @@ import java.util.List;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import burp.pocs.IPoc;
 
 /**
  * CSRF POC Creator extension for Burp Suite
@@ -81,7 +81,7 @@ public class BurpExtender implements IBurpExtender, IContextMenuFactory, ActionL
         for (IHttpRequestResponse ihrr : selectedMessages) {
             try {
                 String actionCommand = e.getActionCommand();
-                Poc poc = Pocs.getPoc(actionCommand);
+                IPoc poc = Pocs.getPoc(actionCommand);
                 byte[] pocContent = poc.getPoc(ihrr);
                 PocCreatorTab pocCreatorTab = new PocCreatorTab(ihrr, pocContent);
                 pocCreatorTab.setSelectedItem(actionCommand);

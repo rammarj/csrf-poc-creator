@@ -13,7 +13,7 @@ import burp.Util;
  * 
  * @author Joaquin R. Martinez <joaquin.ramirez.mtz.lab@gmail.com>
  */
-public class AjaxPoc implements Poc {
+public class AjaxPoc implements IPoc {
 
     @Override
     public byte[] getPoc(final IHttpRequestResponse request) {

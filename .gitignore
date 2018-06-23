@@ -4,3 +4,4 @@ dist/lib/*
 dist/README.TXT
 manifest.mf
 build.xml
+/dist/

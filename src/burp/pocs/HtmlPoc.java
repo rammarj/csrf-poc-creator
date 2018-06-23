@@ -15,7 +15,7 @@ import java.util.List;
  * 
  * @author Joaquin R. Martinez <joaquin.ramirez.mtz.lab@gmail.com>
  */
-public class HtmlPoc implements Poc {
+public class HtmlPoc implements IPoc {
 
     @Override
     public byte[] getPoc(final IHttpRequestResponse request) {

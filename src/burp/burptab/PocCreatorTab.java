@@ -10,7 +10,6 @@ import burp.IMessageEditor;
 import burp.IMessageEditorController;
 import burp.IRequestInfo;
 import burp.ITextEditor;
-import burp.pocs.Poc;
 import burp.pocs.Pocs;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -36,6 +35,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
+import burp.pocs.IPoc;
 
 /**
  * POC Creator tab
@@ -154,7 +154,7 @@ public class PocCreatorTab extends JPanel implements ActionListener, ItemListene
     @Override
     public void itemStateChanged(ItemEvent e) {
         String selectedItem = this.pocTypesCombo.getSelectedItem().toString();
-        Poc poc = Pocs.getPoc(selectedItem);
+        IPoc poc = Pocs.getPoc(selectedItem);
         try {
             byte[] pocContent = poc.getPoc(this.request);
             this.textEditor.setText(pocContent);

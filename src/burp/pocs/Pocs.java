@@ -11,7 +11,7 @@ import java.util.Iterator;
  */
 public class Pocs {
     
-    private static final HashMap<String, Poc> POCS = new HashMap<String, Poc>() ;        
+    private static final HashMap<String, IPoc> POCS = new HashMap<String, IPoc>() ;        
     private static Pocs poc = null;
     
     /**
@@ -33,17 +33,17 @@ public class Pocs {
     }
     
     /**
-     * Get the {@link Poc} object by its key.
-     * @param key the key of the {@link Poc}.
-     * @return the {@link Poc} object.
+     * Get the {@link IPoc} object by its key.
+     * @param key the key of the {@link IPoc}.
+     * @return the {@link IPoc} object.
      */
-    public static Poc getPoc(String key) {
+    public static IPoc getPoc(String key) {
         return Pocs.POCS.get(key);
     }        
     
     /**
-     * Get the {@link Poc} as a {@link Enumeration}.
-     * @return an {@link Iterator} with the keys of all {@link Poc} objects.
+     * Get the {@link IPoc} as a {@link Enumeration}.
+     * @return an {@link Iterator} with the keys of all {@link IPoc} objects.
      */
     public static Iterator<String> getPocKeys(){
         return Pocs.POCS.keySet().iterator();
