@@ -1,7 +1,14 @@
 nbproject/*
 build/*
-dist/lib/*
-dist/README.TXT
+dist/*
 manifest.mf
 build.xml
 /dist/
+/bin/
+/target/
+
+## maven ##
+.classpath
+.project
+.settings/
+mvn*
