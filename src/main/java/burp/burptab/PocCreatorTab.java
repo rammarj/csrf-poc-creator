@@ -94,12 +94,14 @@ public class PocCreatorTab extends JPanel implements ActionListener, ItemListene
         splitPane.add(this.messageEditor.getComponent());
         splitPane.add(this.textEditor.getComponent());
         PocCreatorTab.this.add("Center", splitPane);
+        
         //buttons panel
         JPanel buttonsPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         buttonsPanel.add(new JLabel("PoC type: "));
         buttonsPanel.add(this.pocTypesCombo);
         buttonsPanel.add(this.copyButton);
         buttonsPanel.add(this.saveButton);
+        
         //add buttons to end
         PocCreatorTab.this.add("South", buttonsPanel);
         this.textEditor.setText(poc);
@@ -136,17 +138,14 @@ public class PocCreatorTab extends JPanel implements ActionListener, ItemListene
     private void save() {
         int showSaveDialog = this.saveFileDialog.showSaveDialog(this.textEditor.getComponent());
         if (showSaveDialog == JFileChooser.APPROVE_OPTION) {
-            try {
-                File file = this.saveFileDialog.getSelectedFile();
-                try (FileWriter fileWriter = new FileWriter(file);
-                        BufferedWriter bufferedWriter = new BufferedWriter(fileWriter)) {
-                    bufferedWriter.write(BurpExtender.getBurpExtenderCallbacks().getHelpers().bytesToString(this.textEditor.getText()));
-                    bufferedWriter.flush();
-                    fileWriter.flush();
-                }
-            } catch (IOException ex) {
-                JOptionPane.showMessageDialog(this, ex, "Error", JOptionPane.ERROR_MESSAGE);
+            File file = this.saveFileDialog.getSelectedFile();
+            try (FileWriter fileWriter = new FileWriter(file);
+                    BufferedWriter bufferedWriter = new BufferedWriter(fileWriter)) {
+                bufferedWriter.write(BurpExtender.getBurpExtenderCallbacks().getHelpers().bytesToString(this.textEditor.getText()));
             }
+	         catch (IOException ex) {
+	            JOptionPane.showMessageDialog(this, ex, "Error", JOptionPane.ERROR_MESSAGE);
+	         }
         }
     }
 
