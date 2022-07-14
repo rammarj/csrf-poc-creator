@@ -35,8 +35,7 @@ public class AjaxPoc implements IPoc {
         } else {
             pocString.append(requestInfo.getUrl().toString()).append("\", true);").append(lineSeparator);
             String body = iexHelpers.bytesToString(request.getRequest()).substring(requestInfo.getBodyOffset());
-            body = Util.escapeBackSlashes(body);
-            body = Util.escapeDoubleQuotes(body);
+            body = Util.escape(body);
             String accept = "xt/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8";
             String content = "text/plain";
             for (Parameter next : Util.parseHeaderList(requestInfo.getHeaders())) {

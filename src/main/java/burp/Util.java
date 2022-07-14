@@ -9,29 +9,14 @@ import java.util.stream.Collectors;
  * @author Joaquin R. Martinez <joaquin.ramirez.mtz.lab@gmail.com>
  */
 public class Util {
+    
     /**
-     * Escapes double coutes
-     * @param escaping the string to escape
-     * @return the escaped string
-     */
-    public static String escapeDoubleQuotes(String escaping) {
-        return escaping.replace("\"", "\\\"");
-    }
-    /**
-     * Escapes single quotes
+     * Escapes backslashes and doublequotes
      * @param escape the string to escape
      * @return the escaped string
      */
-    public static String escapeSingleQuotes(String escape) {
-        return escape.replace("'", "\\'");
-    }
-    /**
-     * Escapes backslashes
-     * @param escape the string to escape
-     * @return the escaped string
-     */
-    public static String escapeBackSlashes(String escape){
-        return escape.replace("\\", "\\\\");
+    public static String escape(String escape){
+        return escape.replace("\\", "\\\\").replace("\"", "\\\"");
     }
     /**
      * Generates a random string (for Multipart requests)
@@ -54,24 +39,7 @@ public class Util {
         }
         return a.toString();
     }
-    /**
-     * Builds objects of Parameters passed as a string
-     * @param params the string to build
-     * @return a list of Parameter objects
-     */
-    public static List<Parameter> getParameters(String params) {
-        LinkedList<Parameter> linkedList = new LinkedList<>();
-        if (params != null) {
-            String[] split = params.split("&");
-            for (String split1 : split) {
-                if (!"".equals(split1)) {
-                    linkedList.add(Parameter.build(split1));
-                }
-            }
-        }
-        return linkedList;
-    }
-    
+
     /**
      * Join all parameters with a "&"
      * @param p the list of Parameters to join
@@ -88,7 +56,7 @@ public class Util {
      * @return a list of Header objects
      */
     public static List<Header> parseHeaderList(List<String> headers){
-        LinkedList<Header> a = new LinkedList<>();
+        List<Header> a = new LinkedList<>();
         headers.stream().map(next -> Header.build(next)).forEach(build -> {
             a.add(build);
         });
