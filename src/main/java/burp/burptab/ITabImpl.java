@@ -7,7 +7,7 @@ import java.awt.Component;
  *
  * @author Joaquin R. Martinez
  */
-public class ITabImpl implements ITab, Cloneable{
+public class ITabImpl implements ITab {
 
     private final Component contentComponent;
     private final String tabString;
@@ -21,14 +21,6 @@ public class ITabImpl implements ITab, Cloneable{
         this.contentComponent = ui;
         this.tabString = tabstring;
     }
-
-    /**
-     * Creates a new ITabImpl object with empty title and NULL object as content component.
-     */
-    public ITabImpl() {
-        this.contentComponent = null;
-        this.tabString = "";
-    }    
 
     @Override
     public String getTabCaption() {
