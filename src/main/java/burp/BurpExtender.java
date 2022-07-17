@@ -84,7 +84,7 @@ public class BurpExtender implements IBurpExtender, IContextMenuFactory, ActionL
                 pocCreatorTab.setSelectedItem(actionCommand);
                 this.pocTabManager.addTab(String.valueOf((this.tabCount++)), pocCreatorTab);
             } catch (Exception ex) {
-                JOptionPane.showMessageDialog(this.pocTabManager, ex.getMessage());
+                JOptionPane.showMessageDialog(this.pocTabManager, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
             }
         }
     }

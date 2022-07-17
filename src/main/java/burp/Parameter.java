@@ -9,7 +9,7 @@ import java.net.URLEncoder;
  *
  * @author Joaquin R. Martinez <joaquin.ramirez.mtz.lab@gmail.com>
  */
-public class Parameter implements IParameter, Cloneable {
+public class Parameter implements IParameter {
 
     private String name;
     protected String value;

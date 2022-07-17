@@ -89,7 +89,8 @@ public class PocCreatorTab extends JPanel implements ActionListener, ItemListene
             public byte[] getResponse() {
                 return req.getResponse();
             }
-        }, true);        
+        }, true);
+        
         JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
         splitPane.add(this.messageEditor.getComponent());
         splitPane.add(this.textEditor.getComponent());

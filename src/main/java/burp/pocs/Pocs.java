@@ -4,6 +4,7 @@ package burp.pocs;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 /**
  * Contains all types of PoC's supported by this plugin.
@@ -11,7 +12,7 @@ import java.util.Iterator;
  */
 public class Pocs {
     
-    private static final HashMap<String, IPoc> POCS = new HashMap<>() ;        
+    private static final Map<String, IPoc> POCS = new HashMap<>() ;        
     private static Pocs poc = null;
     
     /**
