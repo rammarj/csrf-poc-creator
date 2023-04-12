@@ -18,6 +18,7 @@ public class Util {
     public static String escape(String escape){
         return escape.replace("\\", "\\\\").replace("\"", "\\\"");
     }
+    
     /**
      * Generates a random string (for Multipart requests)
      * @param lenght the char number of the random string
@@ -55,9 +56,9 @@ public class Util {
      * @param  headers the string to build
      * @return a list of Header objects
      */
-    public static List<Header> parseHeaderList(List<String> headers){
+    public static List<Header> parseHeaders(List<String> headers){
         List<Header> a = new LinkedList<>();
-        headers.stream().map(next -> Header.build(next)).forEach(build -> {
+        headers.stream().map(next -> Header.parse(next)).forEach(build -> {
             a.add(build);
         });
         return a;

@@ -1,9 +1,10 @@
 package burp;
 
-import burp.burptab.ITabImpl;
-import burp.burptab.PocCreatorTab;
-import burp.burptab.PocTabManager;
 import burp.pocs.Pocs;
+import burp.tab.TabImpl;
+import burp.tab.PocCreatorTab;
+import burp.tab.PocTabManager;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Iterator;
@@ -38,8 +39,7 @@ public class BurpExtender implements IBurpExtender, IContextMenuFactory, ActionL
         this.pocTabManager = new PocTabManager();
         ibec.registerContextMenuFactory(this);
         ibec.setExtensionName("CSRF PoC Creator");
-        BurpExtender.burpExtenderCallbacks.addSuiteTab(new ITabImpl("CSRF PoC", this.pocTabManager));
-        Pocs.initialize();
+        BurpExtender.burpExtenderCallbacks.addSuiteTab(new TabImpl("CSRF PoC", this.pocTabManager));
         // add menus
         Iterator<String> pocKeys = Pocs.getPocKeys();
         while (pocKeys.hasNext()) {

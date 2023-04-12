@@ -21,9 +21,7 @@ public class Header extends Parameter {
      * @param header the string to parse (name:value)
      * @return  The header object created
      */
-    public static Header build(String header){
-        if(header == null)
-            throw new NullPointerException("header must not be null");
+    public static Header parse(String header){
         String[] split = header.split(":");
         String name = split[0].trim(), value="";
         if (split.length > 1) {

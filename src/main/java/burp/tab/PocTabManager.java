@@ -1,5 +1,5 @@
 
-package burp.burptab;
+package burp.tab;
 
 import java.awt.Dimension;
 import javax.swing.JButton;
@@ -24,19 +24,33 @@ public class PocTabManager extends JTabbedPane {
     public void addTab(final String title, final PocCreatorTab pocCreatorTab) {        
         super.addTab(title, pocCreatorTab);
         int index = getTabCount() - 1;
+        JPanel tabContainer = createTabContainer(title);
+        setTabComponentAt(index, tabContainer);
+    }
+    
+    private JPanel createTabContainer(String title) {
         JPanel tabContainer = new JPanel();
         tabContainer.setOpaque(false);
         tabContainer.add(new JLabel(title));
+        JButton closeTabButton = createTabButton(title);
+        tabContainer.add(closeTabButton);
+        return tabContainer;
+    }
+    
+    private JButton createTabButton(String title) {
         CloseIcon closeIcon = new CloseIcon();
         JButton closeTabButton = new JButton(closeIcon);
-        closeTabButton.setPreferredSize(new Dimension(closeIcon.getIconWidth(), closeIcon.getIconHeight()));
-        closeTabButton.addActionListener(e -> {
-            int indexOfTab = indexOfTab(title); //tabs title does not change
-            if (indexOfTab != -1) {
-                removeTabAt(indexOfTab);
-            }
-        });
-        tabContainer.add(closeTabButton);
-        setTabComponentAt(index, tabContainer);
+        Dimension closeIconDimension = new Dimension(closeIcon.getIconWidth(), closeIcon.getIconHeight());
+        closeTabButton.setPreferredSize(closeIconDimension);
+        closeTabButton.addActionListener(e -> removeTab(title));
+        return closeTabButton;
     }
+
+	private void removeTab(String title) {
+		int indexOfTab = indexOfTab(title); //tabs title does not change
+        if (indexOfTab != -1) {
+            removeTabAt(indexOfTab);
+        }
+	}
+    
 }

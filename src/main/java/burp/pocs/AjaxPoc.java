@@ -30,19 +30,19 @@ public class AjaxPoc implements IPoc {
         pocString.append("        xhr.open(\"").append(method).append("\", \"");
 
         if ("GET".equals(method)) {
-            pocString.append(request.getHttpService()).append("\", true);").append(lineSeparator);
+            pocString.append(requestInfo.getUrl()).append("\", true);").append(lineSeparator);
             pocString.append("        xhr.send();\n");
         } else {
             pocString.append(requestInfo.getUrl().toString()).append("\", true);").append(lineSeparator);
             String body = iexHelpers.bytesToString(request.getRequest()).substring(requestInfo.getBodyOffset());
             body = Util.escape(body);
-            String accept = "xt/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8";
+            String accept = "*/*";
             String content = "text/plain";
-            for (Parameter next : Util.parseHeaderList(requestInfo.getHeaders())) {
-                if ("Accept".equals(next.getName())) {
+            for (Parameter next : Util.parseHeaders(requestInfo.getHeaders())) {
+                if ("Accept".equalsIgnoreCase(next.getName())) {
                     accept = next.getValue();
                 }
-                if ("Content-Type".equals(next.getName())) {
+                if ("Content-Type".equalsIgnoreCase(next.getName())) {
                     content = next.getValue();
                 }
             }
