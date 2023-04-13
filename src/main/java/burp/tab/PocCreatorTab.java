@@ -7,9 +7,12 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 import burp.BurpExtender;
+import burp.IBurpExtenderCallbacks;
+import burp.IExtensionHelpers;
 import burp.IHttpRequestResponse;
 import burp.IMessageEditor;
 import burp.ITextEditor;
+import burp.pocs.Pocs;
 import burp.tab.buttons.CopyPOCButton;
 import burp.tab.buttons.SavePOCButton;
 
@@ -29,22 +32,22 @@ public class PocCreatorTab extends JPanel {
 	 * Creates pocString new tab for pocString poc
 	 *
 	 * @param request the request to show on the left
-	 * @param poc the poc code
+	 * @param poc     the poc code
 	 */
-	public PocCreatorTab(IHttpRequestResponse request, byte[] poc) {
+	public PocCreatorTab(IBurpExtenderCallbacks callbacks, IHttpRequestResponse request, Pocs pocs, byte[] poc) {
 		super(new BorderLayout(10, 10));
-		this.textEditor = BurpExtender.getBurpExtenderCallbacks().createTextEditor();
-		this.pocTypesCombo = new POCTypesComboBox(textEditor, request);
+		this.textEditor = callbacks.createTextEditor();
+		this.pocTypesCombo = new POCTypesComboBox(textEditor, request, pocs);
 
 		/* Making our message editor great with burp normal popup menu */
-		this.messageEditor = BurpExtender.getBurpExtenderCallbacks()
-				.createMessageEditor(new MessageEditorController(request, messageEditor), true);
-;
+		MessageEditorController editorController = new MessageEditorController(callbacks.getHelpers(), request, messageEditor);
+		this.messageEditor = callbacks.createMessageEditor(editorController, true);
+		
 		this.add(BorderLayout.CENTER, createEditorSplitPane());
-		this.add(BorderLayout.SOUTH, createButtonsPanel());
+		this.add(BorderLayout.SOUTH, createButtonsPanel(callbacks.getHelpers()));
 		this.textEditor.setText(poc);
 		this.messageEditor.setMessage(request.getRequest(), true);
-		BurpExtender.getBurpExtenderCallbacks().customizeUiComponent(PocCreatorTab.this);// burp lookandfeel
+		callbacks.customizeUiComponent(PocCreatorTab.this);// burp lookandfeel
 	}
 
 	/**
@@ -63,12 +66,12 @@ public class PocCreatorTab extends JPanel {
 		return editorArea;
 	}
 
-	private JPanel createButtonsPanel() {
+	private JPanel createButtonsPanel(IExtensionHelpers helpers) {
 		JPanel buttonsPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
 		buttonsPanel.add(new JLabel("PoC type: "));
 		buttonsPanel.add(pocTypesCombo);
-		buttonsPanel.add(new CopyPOCButton(textEditor));
-		buttonsPanel.add(new SavePOCButton(textEditor));
+		buttonsPanel.add(new CopyPOCButton(textEditor,helpers));
+		buttonsPanel.add(new SavePOCButton(textEditor,helpers));
 		return buttonsPanel;
 	}
 

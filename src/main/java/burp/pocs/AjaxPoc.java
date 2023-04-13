@@ -14,10 +14,15 @@ import burp.Util;
  * @author Joaquin R. Martinez <joaquin.ramirez.mtz.lab@gmail.com>
  */
 public class AjaxPoc implements IPoc {
+	
+	private IExtensionHelpers helpers;
+	
+	public AjaxPoc(IExtensionHelpers helpers) {
+		this.helpers = helpers;
+	}
 
     @Override
     public byte[] getPoc(final IHttpRequestResponse request) {
-        IExtensionHelpers iexHelpers = BurpExtender.getBurpExtenderCallbacks().getHelpers();
         String lineSeparator = System.lineSeparator();
         StringBuilder pocString = new StringBuilder();
         pocString.append("<!DOCTYPE html>").append(lineSeparator);
@@ -25,7 +30,7 @@ public class AjaxPoc implements IPoc {
         pocString.append("<body>").append(lineSeparator).append("    <script>\n      function submitRequest()").append(lineSeparator);
         pocString.append("      {").append(lineSeparator).append("        var xhr = new XMLHttpRequest();").append(lineSeparator);
         String method;
-        IRequestInfo requestInfo = iexHelpers.analyzeRequest(request);
+        IRequestInfo requestInfo = helpers.analyzeRequest(request);
         method = requestInfo.getMethod();
         pocString.append("        xhr.open(\"").append(method).append("\", \"");
 
@@ -34,7 +39,7 @@ public class AjaxPoc implements IPoc {
             pocString.append("        xhr.send();\n");
         } else {
             pocString.append(requestInfo.getUrl().toString()).append("\", true);").append(lineSeparator);
-            String body = iexHelpers.bytesToString(request.getRequest()).substring(requestInfo.getBodyOffset());
+            String body = helpers.bytesToString(request.getRequest()).substring(requestInfo.getBodyOffset());
             body = Util.escape(body);
             String accept = "*/*";
             String content = "text/plain";

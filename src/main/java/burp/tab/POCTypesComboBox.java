@@ -17,11 +17,13 @@ public class POCTypesComboBox extends JComboBox<String> implements ItemListener 
 	private static final long serialVersionUID = 1L;
 	private IHttpRequestResponse request;
 	private ITextEditor textEditor;
+	private Pocs pocs;
 
-	public POCTypesComboBox(ITextEditor textEditor, IHttpRequestResponse request) {
+	public POCTypesComboBox(ITextEditor textEditor, IHttpRequestResponse request, Pocs pocs) {
 		this.textEditor = textEditor;
 		this.request = request;
-		Iterator<String> pocKeys = Pocs.getPocKeys();
+		this.pocs = pocs;
+		Iterator<String> pocKeys = pocs.getPocKeys();
 		while (pocKeys.hasNext()) {
 			addItem(pocKeys.next());
 		}
@@ -31,7 +33,7 @@ public class POCTypesComboBox extends JComboBox<String> implements ItemListener 
 	@Override
 	public void itemStateChanged(ItemEvent e) {
 		String selectedItem = getSelectedItem().toString();
-        IPoc poc = Pocs.getPoc(selectedItem);
+        IPoc poc = this.pocs.getPoc(selectedItem);
         try {
             byte[] pocContent = poc.getPoc(this.request);
             this.textEditor.setText(pocContent);

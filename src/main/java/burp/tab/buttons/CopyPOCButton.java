@@ -15,17 +15,18 @@ public class CopyPOCButton extends JButton implements ActionListener{
 	private static final long serialVersionUID = 1L;
 	
 	private ITextEditor textEditor;
+	private IExtensionHelpers helper;
 	
-	public CopyPOCButton(ITextEditor textEditor) {
+	public CopyPOCButton(ITextEditor textEditor, IExtensionHelpers helper) {
 		super("copy");
 		this.textEditor = textEditor;
+		this.helper = helper;
 		addActionListener(this);
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		IExtensionHelpers helpers = BurpExtender.getBurpExtenderCallbacks().getHelpers();
-        String bytesToString = helpers.bytesToString(this.textEditor.getText());  
+        String bytesToString = this.helper.bytesToString(this.textEditor.getText());  
         Clipboard systemClipboard = Toolkit.getDefaultToolkit().getSystemClipboard();      
         systemClipboard.setContents(new StringSelection(bytesToString), null);
 	}

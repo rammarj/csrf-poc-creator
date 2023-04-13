@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import burp.IExtensionHelpers;
+
 /**
  * Contains all types of PoC's supported by this plugin.
  * 
@@ -13,15 +15,15 @@ import java.util.Map;
  */
 public class Pocs {
 
-	private static final Map<String, IPoc> POCS = new HashMap<>();
-	static Pocs poc = new Pocs();
+	private final Map<String, IPoc> pocs;
 
 	/**
 	 * Inaccesible constructor.
 	 */
-	private Pocs() {
-		Pocs.POCS.put("Ajax", new AjaxPoc());
-		Pocs.POCS.put("HTML", new HtmlPoc());
+	public Pocs(IExtensionHelpers helpers) {
+		this.pocs = new HashMap<>();
+		this.pocs.put("Ajax", new AjaxPoc(helpers));
+		this.pocs.put("HTML", new HtmlPoc(helpers));
 		// Add more kind of PoC's
 	}
 
@@ -31,8 +33,8 @@ public class Pocs {
 	 * @param key the key of the {@link IPoc}.
 	 * @return the {@link IPoc} object.
 	 */
-	public static IPoc getPoc(String key) {
-		return Pocs.POCS.get(key);
+	public IPoc getPoc(String key) {
+		return pocs.get(key);
 	}
 
 	/**
@@ -40,8 +42,8 @@ public class Pocs {
 	 * 
 	 * @return an {@link Iterator} with the keys of all {@link IPoc} objects.
 	 */
-	public static Iterator<String> getPocKeys() {
-		return Pocs.POCS.keySet().iterator();
+	public Iterator<String> getPocKeys() {
+		return this.pocs.keySet().iterator();
 	}
 
 }

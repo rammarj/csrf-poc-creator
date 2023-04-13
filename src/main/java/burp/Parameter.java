@@ -159,19 +159,5 @@ public class Parameter implements IParameter {
         }
         return a.toString();
     }
-
-    /**
-     * Constructs a parameter from a string.
-     * @param t the parameter as a string.
-     * @return a {@link Parameter} object.
-     */
-    public static Parameter build(String t){
-        Parameter parameter = new Parameter();
-        String[] split = t.split("=");
-        if (split.length>=2) {
-            parameter.setName(split[0]);
-            parameter.setValue(split[1]);
-        }
-        return parameter;
-    }    
+ 
 }

@@ -1,6 +1,6 @@
 package burp.tab;
 
-import burp.BurpExtender;
+import burp.IExtensionHelpers;
 import burp.IHttpRequestResponse;
 import burp.IHttpService;
 import burp.IHttpServiceImpl;
@@ -10,17 +10,19 @@ import burp.IRequestInfo;
 
 public class MessageEditorController implements IMessageEditorController {
 	
+	private IExtensionHelpers helpers;
 	private IHttpRequestResponse request;
 	private IMessageEditor messageEditor;
 
-	public MessageEditorController(IHttpRequestResponse request, IMessageEditor messageEditor) {
+	public MessageEditorController(IExtensionHelpers helpers, IHttpRequestResponse request, IMessageEditor messageEditor) {
+		this.helpers = helpers;
 		this.request = request;
 		this.messageEditor = messageEditor;
 	}
 	
 	@Override
     public IHttpService getHttpService() {
-        IRequestInfo analyzeRequest = BurpExtender.getBurpExtenderCallbacks().getHelpers().analyzeRequest(this.request);
+        IRequestInfo analyzeRequest = this.helpers.analyzeRequest(this.request);
         return new IHttpServiceImpl(analyzeRequest);
     }
 
