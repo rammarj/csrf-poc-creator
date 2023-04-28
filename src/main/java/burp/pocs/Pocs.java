@@ -6,8 +6,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import burp.IExtensionHelpers;
-
 /**
  * Contains all types of PoC's supported by this plugin.
  * 
@@ -15,32 +13,32 @@ import burp.IExtensionHelpers;
  */
 public class Pocs {
 
-	private final Map<String, IPoc> pocs;
+	private final Map<String, PocGenerator> pocs;
 
 	/**
 	 * Inaccesible constructor.
 	 */
-	public Pocs(IExtensionHelpers helpers) {
+	public Pocs() {
 		this.pocs = new HashMap<>();
-		this.pocs.put("Ajax", new AjaxPoc(helpers));
-		this.pocs.put("HTML", new HtmlPoc(helpers));
+		this.pocs.put("Ajax", new AjaxPoc());
+		this.pocs.put("HTML", new HtmlPoc());
 		// Add more kind of PoC's
 	}
 
 	/**
-	 * Get the {@link IPoc} object by its key.
+	 * Get the {@link PocGenerator} object by its key.
 	 * 
-	 * @param key the key of the {@link IPoc}.
-	 * @return the {@link IPoc} object.
+	 * @param key the key of the {@link PocGenerator}.
+	 * @return the {@link PocGenerator} object.
 	 */
-	public IPoc getPoc(String key) {
+	public PocGenerator getPoc(String key) {
 		return pocs.get(key);
 	}
 
 	/**
-	 * Get the {@link IPoc} as a {@link Enumeration}.
+	 * Get the {@link PocGenerator} as a {@link Enumeration}.
 	 * 
-	 * @return an {@link Iterator} with the keys of all {@link IPoc} objects.
+	 * @return an {@link Iterator} with the keys of all {@link PocGenerator} objects.
 	 */
 	public Iterator<String> getPocKeys() {
 		return this.pocs.keySet().iterator();

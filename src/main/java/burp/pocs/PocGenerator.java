@@ -2,11 +2,12 @@
 package burp.pocs;
 
 import burp.IHttpRequestResponse;
+import burp.util.Request;
 
 /**
  * @author Joaquin R. Martinez <joaquin.ramirez.mtz.lab@gmail.com>
  */
-public interface IPoc {
+public interface PocGenerator {
 
     /**
      * Returns the PoC code.
@@ -14,6 +15,6 @@ public interface IPoc {
      * @return the PoC code.
      * @throws java.lang.Exception
      */
-    public byte[] getPoc(final IHttpRequestResponse r) throws Exception;
+    public byte[] generate(final Request request);
     
 }

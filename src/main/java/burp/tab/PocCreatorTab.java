@@ -3,18 +3,23 @@ package burp.tab;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
+import java.util.Iterator;
+import javax.swing.JComboBox;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
-import burp.BurpExtender;
 import burp.IBurpExtenderCallbacks;
 import burp.IExtensionHelpers;
 import burp.IHttpRequestResponse;
 import burp.IMessageEditor;
 import burp.ITextEditor;
+import burp.pocs.PocGenerator;
 import burp.pocs.Pocs;
 import burp.tab.buttons.CopyPOCButton;
 import burp.tab.buttons.SavePOCButton;
+import burp.util.MessageEditorController;
+import burp.util.Request;
 
 /**
  * POC Creator tab
@@ -26,27 +31,48 @@ public class PocCreatorTab extends JPanel {
 	private static final long serialVersionUID = 1L;
 	private final ITextEditor textEditor;
 	private IMessageEditor messageEditor;
-	private POCTypesComboBox pocTypesCombo;
+	private JComboBox<String> pocTypesCombo;
 
 	/**
 	 * Creates pocString new tab for pocString poc
 	 *
-	 * @param request the request to show on the left
-	 * @param poc     the poc code
+	 * @param ihrr       the request to show on the left
+	 * @param currentPoc the poc code
 	 */
-	public PocCreatorTab(IBurpExtenderCallbacks callbacks, IHttpRequestResponse request, Pocs pocs, byte[] poc) {
+	public PocCreatorTab(IBurpExtenderCallbacks callbacks, IHttpRequestResponse ihrr, Pocs pocs, byte[] currentPoc) {
 		super(new BorderLayout(10, 10));
 		this.textEditor = callbacks.createTextEditor();
-		this.pocTypesCombo = new POCTypesComboBox(textEditor, request, pocs);
+		IExtensionHelpers helpers = callbacks.getHelpers();
 
 		/* Making our message editor great with burp normal popup menu */
-		MessageEditorController editorController = new MessageEditorController(callbacks.getHelpers(), request, messageEditor);
+		MessageEditorController editorController = new MessageEditorController(helpers, ihrr, messageEditor);
 		this.messageEditor = callbacks.createMessageEditor(editorController, true);
-		
+		// POC types combo
+		this.pocTypesCombo = new JComboBox<>();
+		Iterator<String> pocKeys = pocs.getPocKeys();
+		while (pocKeys.hasNext()) {
+			pocTypesCombo.addItem(pocKeys.next());
+		}
+
+		pocTypesCombo.addItemListener(e -> {
+			String selectedItem = pocTypesCombo.getSelectedItem().toString();
+			PocGenerator generator = pocs.getPoc(selectedItem);
+			if (this.messageEditor.isMessageModified())
+				ihrr.setRequest(this.messageEditor.getMessage());
+
+			byte[] pocContent = null;
+			try {
+				pocContent = generator.generate(Request.fromHTTPRequestResponse(ihrr, helpers));
+			} catch (Exception ex) {
+				JOptionPane.showMessageDialog(this, ex.getMessage(), "", JOptionPane.WARNING_MESSAGE);
+			}
+			this.textEditor.setText(pocContent);
+		});
+
 		this.add(BorderLayout.CENTER, createEditorSplitPane());
-		this.add(BorderLayout.SOUTH, createButtonsPanel(callbacks.getHelpers()));
-		this.textEditor.setText(poc);
-		this.messageEditor.setMessage(request.getRequest(), true);
+		this.add(BorderLayout.SOUTH, createButtonsPanel(helpers));
+		this.textEditor.setText(currentPoc);
+		this.messageEditor.setMessage(ihrr.getRequest(), true);
 		callbacks.customizeUiComponent(PocCreatorTab.this);// burp lookandfeel
 	}
 
@@ -70,8 +96,8 @@ public class PocCreatorTab extends JPanel {
 		JPanel buttonsPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
 		buttonsPanel.add(new JLabel("PoC type: "));
 		buttonsPanel.add(pocTypesCombo);
-		buttonsPanel.add(new CopyPOCButton(textEditor,helpers));
-		buttonsPanel.add(new SavePOCButton(textEditor,helpers));
+		buttonsPanel.add(new CopyPOCButton(textEditor, helpers));
+		buttonsPanel.add(new SavePOCButton(textEditor, helpers));
 		return buttonsPanel;
 	}
 

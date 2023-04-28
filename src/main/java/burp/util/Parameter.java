@@ -1,8 +1,9 @@
 
-package burp;
+package burp.util;
 
-import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+import burp.IParameter;
 
 /**
  * Implementation of IParameter interface.
@@ -13,7 +14,7 @@ public class Parameter implements IParameter {
 
     private String name;
     protected String value;
-    protected Type type;
+    protected byte type;
 
     /** Sets the name of this parameter.
      * @param name the name of the parameter.
@@ -33,10 +34,11 @@ public class Parameter implements IParameter {
     /**
      * Types of parameters.
      */
-    enum Type {
-        PARAM_URL, PARAM_HEADER, PARAM_MULTIPART,
-        PARAM_FORM_URL_ENCODED, PARAM_UNKNOWN
-    }
+    public static final byte PARAM_HEADER = 20;
+    public static final byte PARAM_MULTIPART = 21;
+    public static final byte PARAM_FORM_URL_ENCODED = 22;
+    public static final byte PARAM_UNKNOWN = 23;
+    
 
     /**
      * Constructs a new parameter with its given name, value and type.
@@ -44,7 +46,7 @@ public class Parameter implements IParameter {
      * @param value the value of the parameter.
      * @param type the type of the parameter.
      */
-    public Parameter(String name, String value, Type type) {
+    public Parameter(String name, String value, byte type) {
         this.name = name.trim();
         this.value = value.trim();
         this.type = type;
@@ -56,27 +58,18 @@ public class Parameter implements IParameter {
     public Parameter() {
         this.name = "";
         this.value = "";
-        this.type = Type.PARAM_URL;
+        this.type = PARAM_URL;
     }
     /**
      * Deprecated
      * Deprecated. Use {@link #getParameterType() } instead.
-     * @deprecated
      * @see #getParameterType()
      */
     @Override
     public byte getType() {
-        return 0;
-    }
-    
-    /**
-     * Gets the parameter type.
-     * @return the type of the parameter.
-     */
-    public Type getParameterType() {
         return this.type;
     }
-
+   
     /** Gets the name of this parameter.
      * @return the name of the parameter.
      */
@@ -136,9 +129,7 @@ public class Parameter implements IParameter {
     @Override
     public String toString() {
         StringBuilder a = new StringBuilder();
-        if (null == type) 
-            a.append(getName()).append("=").append(getValue()).toString();
-       else switch (type) {
+        switch (type) {
             case PARAM_MULTIPART:
                 a.append("Content-Disposition: form-data; name=\"")
                         .append(this.getName()).append("\"\r\n")
@@ -146,9 +137,7 @@ public class Parameter implements IParameter {
                 break;
             case PARAM_FORM_URL_ENCODED:
             case PARAM_URL:
-                try {
-                    a.append(getName()).append("=").append(URLEncoder.encode(getValue(), "UTF-8"));
-                } catch (UnsupportedEncodingException ex) {}
+				a.append(getName()).append("=").append(URLEncoder.encode(getValue(), StandardCharsets.UTF_8));
                 break;
             case PARAM_HEADER:
                 a.append(getName()).append(": ").append(getValue());

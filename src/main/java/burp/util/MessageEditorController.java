@@ -1,9 +1,8 @@
-package burp.tab;
+package burp.util;
 
 import burp.IExtensionHelpers;
 import burp.IHttpRequestResponse;
 import burp.IHttpService;
-import burp.IHttpServiceImpl;
 import burp.IMessageEditor;
 import burp.IMessageEditorController;
 import burp.IRequestInfo;
@@ -23,7 +22,7 @@ public class MessageEditorController implements IMessageEditorController {
 	@Override
     public IHttpService getHttpService() {
         IRequestInfo analyzeRequest = this.helpers.analyzeRequest(this.request);
-        return new IHttpServiceImpl(analyzeRequest);
+        return new IHttpServiceImpl(analyzeRequest.getUrl());
     }
 
     @Override

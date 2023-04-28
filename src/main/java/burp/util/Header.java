@@ -1,5 +1,5 @@
 
-package burp;
+package burp.util;
 
 /**
  * 
@@ -13,7 +13,7 @@ public class Header extends Parameter {
      * @param value the header value 
      */
     public Header(String name, String value) {
-        super(name, value, Type.PARAM_HEADER);        
+        super(name, value, Parameter.PARAM_HEADER);        
     }
 
     /**

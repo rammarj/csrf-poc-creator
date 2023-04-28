@@ -1,19 +1,18 @@
 package burp;
 
-import burp.pocs.Pocs;
-import burp.tab.TabImpl;
-import burp.tab.PocCreatorTab;
-import burp.tab.PocTabManager;
-
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
-import burp.pocs.IPoc;
+import burp.pocs.PocGenerator;
+import burp.pocs.Pocs;
+import burp.tab.PocCreatorTab;
+import burp.tab.PocTabManager;
+import burp.tab.TabImpl;
+import burp.util.Request;
 
 /**
  * CSRF POC Creator extension for Burp Suite
@@ -39,7 +38,7 @@ public class BurpExtender implements IBurpExtender, IContextMenuFactory, ActionL
 	public void registerExtenderCallbacks(IBurpExtenderCallbacks ibec) {
 		this.burpExtenderCallbacks = ibec;
 		this.pocTabManager = new PocTabManager();
-		this.pocs = new Pocs(this.burpExtenderCallbacks.getHelpers());
+		this.pocs = new Pocs();
 		ibec.registerContextMenuFactory(this);
 		ibec.setExtensionName("CSRF PoC Creator");
 		this.burpExtenderCallbacks.addSuiteTab(new TabImpl("CSRF PoC", this.pocTabManager));
@@ -48,11 +47,9 @@ public class BurpExtender implements IBurpExtender, IContextMenuFactory, ActionL
 		while (pocKeys.hasNext()) {
 			String key = pocKeys.next();
 			JMenuItem item = new JMenuItem(key);
-			item.addActionListener(BurpExtender.this);
+			item.addActionListener(this);
 			this.menuItems.add(item);
 		}
-		this.burpExtenderCallbacks.printOutput("Burp csrf-poc-creator plugin for Burp Suite Free loaded!");
-		this.burpExtenderCallbacks.printOutput("Created by @rammarj");
 	}
 
 	/**
@@ -84,12 +81,11 @@ public class BurpExtender implements IBurpExtender, IContextMenuFactory, ActionL
 		for (IHttpRequestResponse ihrr : selectedMessages) {
 			try {
 				String selectedPOC = e.getActionCommand();
-				IPoc poc = this.pocs.getPoc(selectedPOC);
-				byte[] pocContent = poc.getPoc(ihrr);
-
-				PocCreatorTab pocCreatorTab = new PocCreatorTab(this.burpExtenderCallbacks, ihrr, this.pocs, pocContent);
-				pocCreatorTab.setSelectedItem(selectedPOC);
-				this.pocTabManager.addTab(String.valueOf(this.tabCount++), pocCreatorTab);
+				PocGenerator pg = this.pocs.getPoc(selectedPOC);
+				byte[] poc = pg.generate(Request.fromHTTPRequestResponse(ihrr, this.burpExtenderCallbacks.getHelpers()));
+				PocCreatorTab pct = new PocCreatorTab(this.burpExtenderCallbacks, ihrr, this.pocs, poc);
+				pct.setSelectedItem(selectedPOC);
+				this.pocTabManager.addTab(String.valueOf(this.tabCount++), pct);
 			} catch (Exception ex) {
 				JOptionPane.showMessageDialog(this.pocTabManager, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
 			}
