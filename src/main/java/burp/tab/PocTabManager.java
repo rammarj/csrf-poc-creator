@@ -1,18 +1,21 @@
 
 package burp.tab;
 
+import java.awt.Component;
 import java.awt.Dimension;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 
+import burp.ITab;
+
 /**
  * Creates the CSRF POC CREATOR tab
  * @author Joaquin R. Martinez <joaquin.ramirez.mtz.lab@gmail.com>
  */
 
-public class PocTabManager extends JTabbedPane {
+public class PocTabManager extends JTabbedPane implements ITab {
 
 	private static final long serialVersionUID = 1L;
 
@@ -51,6 +54,16 @@ public class PocTabManager extends JTabbedPane {
         if (indexOfTab != -1) {
             removeTabAt(indexOfTab);
         }
+	}
+
+	@Override
+	public String getTabCaption() {
+		return "CSRF PoC";
+	}
+
+	@Override
+	public Component getUiComponent() {
+		return this;
 	}
     
 }

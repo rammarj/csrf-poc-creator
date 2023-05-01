@@ -20,8 +20,8 @@ public class Pocs {
 	 */
 	public Pocs() {
 		this.pocs = new HashMap<>();
-		this.pocs.put("Ajax", new AjaxPoc());
-		this.pocs.put("HTML", new HtmlPoc());
+		this.pocs.put("Ajax", new AjaxPocGenerator());
+		this.pocs.put("HTML", new HtmlPocGenerator());
 		// Add more kind of PoC's
 	}
 
@@ -36,12 +36,12 @@ public class Pocs {
 	}
 
 	/**
-	 * Get the {@link PocGenerator} as a {@link Enumeration}.
+	 * Get the {@link PocGenerator} as an array.
 	 * 
-	 * @return an {@link Iterator} with the keys of all {@link PocGenerator} objects.
+	 * @return an array of keys.
 	 */
-	public Iterator<String> getPocKeys() {
-		return this.pocs.keySet().iterator();
+	public String[] getPocKeys() {
+		return this.pocs.keySet().toArray(new String[] {});
 	}
 
 }

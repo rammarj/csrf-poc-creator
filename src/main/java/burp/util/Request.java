@@ -1,12 +1,7 @@
 package burp.util;
 
 import java.net.URL;
-import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-
 import burp.IExtensionHelpers;
 import burp.IHttpRequestResponse;
 import burp.IParameter;
@@ -23,7 +18,6 @@ public class Request {
 
 	public Request(String method, URL url, String requestBody, List<Header> headers, byte contentType,
 			List<IParameter> parameters) {
-		super();
 		this.method = method;
 		this.url = url;
 		this.requestBody = requestBody;

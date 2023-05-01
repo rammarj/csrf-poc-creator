@@ -1,12 +1,13 @@
-
 package burp.tab;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
-import java.util.Iterator;
+import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
+import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 import burp.IBurpExtenderCallbacks;
@@ -16,8 +17,6 @@ import burp.IMessageEditor;
 import burp.ITextEditor;
 import burp.pocs.PocGenerator;
 import burp.pocs.Pocs;
-import burp.tab.buttons.CopyPOCButton;
-import burp.tab.buttons.SavePOCButton;
 import burp.util.MessageEditorController;
 import burp.util.Request;
 
@@ -31,7 +30,7 @@ public class PocCreatorTab extends JPanel {
 	private static final long serialVersionUID = 1L;
 	private final ITextEditor textEditor;
 	private IMessageEditor messageEditor;
-	private JComboBox<String> pocTypesCombo;
+	private final JComboBox<String> pocTypesCombo = new JComboBox<>();
 
 	/**
 	 * Creates pocString new tab for pocString poc
@@ -47,33 +46,28 @@ public class PocCreatorTab extends JPanel {
 		/* Making our message editor great with burp normal popup menu */
 		MessageEditorController editorController = new MessageEditorController(helpers, ihrr, messageEditor);
 		this.messageEditor = callbacks.createMessageEditor(editorController, true);
+		
 		// POC types combo
-		this.pocTypesCombo = new JComboBox<>();
-		Iterator<String> pocKeys = pocs.getPocKeys();
-		while (pocKeys.hasNext()) {
-			pocTypesCombo.addItem(pocKeys.next());
+		String[] pocKeys = pocs.getPocKeys();
+		for (String key : pocKeys) {
+			pocTypesCombo.addItem(key);
 		}
 
 		pocTypesCombo.addItemListener(e -> {
 			String selectedItem = pocTypesCombo.getSelectedItem().toString();
 			PocGenerator generator = pocs.getPoc(selectedItem);
-			if (this.messageEditor.isMessageModified())
-				ihrr.setRequest(this.messageEditor.getMessage());
-
-			byte[] pocContent = null;
-			try {
-				pocContent = generator.generate(Request.fromHTTPRequestResponse(ihrr, helpers));
-			} catch (Exception ex) {
-				JOptionPane.showMessageDialog(this, ex.getMessage(), "", JOptionPane.WARNING_MESSAGE);
-			}
+			ihrr.setRequest(this.messageEditor.getMessage());
+			byte[] pocContent = generator.generate(Request.fromHTTPRequestResponse(ihrr, helpers));
 			this.textEditor.setText(pocContent);
 		});
 
-		this.add(BorderLayout.CENTER, createEditorSplitPane());
+		JSplitPane editors = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, this.messageEditor.getComponent(),
+				this.textEditor.getComponent());
+		this.add(BorderLayout.CENTER, editors);
 		this.add(BorderLayout.SOUTH, createButtonsPanel(helpers));
 		this.textEditor.setText(currentPoc);
 		this.messageEditor.setMessage(ihrr.getRequest(), true);
-		callbacks.customizeUiComponent(PocCreatorTab.this);// burp lookandfeel
+		callbacks.customizeUiComponent(this);// burp lookandfeel
 	}
 
 	/**
@@ -85,19 +79,25 @@ public class PocCreatorTab extends JPanel {
 		this.pocTypesCombo.setSelectedItem(key);
 	}
 
-	private JSplitPane createEditorSplitPane() {
-		JSplitPane editorArea = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
-		editorArea.add(this.messageEditor.getComponent());
-		editorArea.add(this.textEditor.getComponent());
-		return editorArea;
-	}
-
 	private JPanel createButtonsPanel(IExtensionHelpers helpers) {
 		JPanel buttonsPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+		JButton copyButton = new JButton("copy");
+		copyButton.addActionListener(e -> {
+			String text = helpers.bytesToString(this.textEditor.getText());
+			Clipboard systemClipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+			systemClipboard.setContents(new StringSelection(text), null);
+		});
 		buttonsPanel.add(new JLabel("PoC type: "));
 		buttonsPanel.add(pocTypesCombo);
-		buttonsPanel.add(new CopyPOCButton(textEditor, helpers));
-		buttonsPanel.add(new SavePOCButton(textEditor, helpers));
+		buttonsPanel.add(copyButton);
+		buttonsPanel.add(new SavePOCButton() {
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public String getTextToSave() {
+				return helpers.bytesToString(textEditor.getText());
+			}
+		});
 		return buttonsPanel;
 	}
 

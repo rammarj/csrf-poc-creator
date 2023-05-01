@@ -1,23 +1,21 @@
-
 package burp.util;
 
 import java.net.URL;
-
 import burp.IHttpService;
-import burp.IRequestInfo;
+
 /**
  *
  * @author Joaquin R. Martinez <joaquin.ramirez.mtz.lab@gmail.com>
  */
-public class IHttpServiceImpl implements IHttpService {
+public class HttpServiceImpl implements IHttpService {
 
     private URL url;
 
     /**
-     * Creates a {@link IHttpServiceImpl} using a {@link URL}.
+     * Creates a {@link HttpServiceImpl} using a {@link URL}.
      * @param url the url for this http service
      */
-    public IHttpServiceImpl(URL url) {
+    public HttpServiceImpl(URL url) {
         this.url = url;
     }
 

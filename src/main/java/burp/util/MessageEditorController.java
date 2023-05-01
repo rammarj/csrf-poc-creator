@@ -22,7 +22,7 @@ public class MessageEditorController implements IMessageEditorController {
 	@Override
     public IHttpService getHttpService() {
         IRequestInfo analyzeRequest = this.helpers.analyzeRequest(this.request);
-        return new IHttpServiceImpl(analyzeRequest.getUrl());
+        return new HttpServiceImpl(analyzeRequest.getUrl());
     }
 
     @Override

@@ -1,18 +1,7 @@
 package burp.util;
 
-import java.net.URL;
-import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import java.util.SplittableRandom;
 import java.util.random.RandomGenerator;
-
-import burp.IExtensionHelpers;
-import burp.IHttpRequestResponse;
-import burp.IParameter;
-import burp.IRequestInfo;
 
 /**
  *

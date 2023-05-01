@@ -1,7 +1,6 @@
 
 package burp.pocs;
 
-import burp.IHttpRequestResponse;
 import burp.util.Request;
 
 /**
@@ -11,7 +10,7 @@ public interface PocGenerator {
 
     /**
      * Returns the PoC code.
-     * @param r {@link IHttpRequestResponse} object to use.
+     * @param r {@link Request} object to use.
      * @return the PoC code.
      * @throws java.lang.Exception
      */

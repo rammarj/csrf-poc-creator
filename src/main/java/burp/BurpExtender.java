@@ -11,7 +11,6 @@ import burp.pocs.PocGenerator;
 import burp.pocs.Pocs;
 import burp.tab.PocCreatorTab;
 import burp.tab.PocTabManager;
-import burp.tab.TabImpl;
 import burp.util.Request;
 
 /**
@@ -41,11 +40,10 @@ public class BurpExtender implements IBurpExtender, IContextMenuFactory, ActionL
 		this.pocs = new Pocs();
 		ibec.registerContextMenuFactory(this);
 		ibec.setExtensionName("CSRF PoC Creator");
-		this.burpExtenderCallbacks.addSuiteTab(new TabImpl("CSRF PoC", this.pocTabManager));
+		this.burpExtenderCallbacks.addSuiteTab(this.pocTabManager);
 		// add menus
-		Iterator<String> pocKeys = this.pocs.getPocKeys();
-		while (pocKeys.hasNext()) {
-			String key = pocKeys.next();
+		String[] pocKeys = this.pocs.getPocKeys();
+		for (String key: pocKeys) {
 			JMenuItem item = new JMenuItem(key);
 			item.addActionListener(this);
 			this.menuItems.add(item);
@@ -79,16 +77,13 @@ public class BurpExtender implements IBurpExtender, IContextMenuFactory, ActionL
 	public void actionPerformed(ActionEvent e) {
 		IHttpRequestResponse[] selectedMessages = this.icMenuInvocation.getSelectedMessages();
 		for (IHttpRequestResponse ihrr : selectedMessages) {
-			try {
-				String selectedPOC = e.getActionCommand();
-				PocGenerator pg = this.pocs.getPoc(selectedPOC);
-				byte[] poc = pg.generate(Request.fromHTTPRequestResponse(ihrr, this.burpExtenderCallbacks.getHelpers()));
-				PocCreatorTab pct = new PocCreatorTab(this.burpExtenderCallbacks, ihrr, this.pocs, poc);
-				pct.setSelectedItem(selectedPOC);
-				this.pocTabManager.addTab(String.valueOf(this.tabCount++), pct);
-			} catch (Exception ex) {
-				JOptionPane.showMessageDialog(this.pocTabManager, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-			}
+			String selectedPOC = e.getActionCommand();
+			PocGenerator pg = this.pocs.getPoc(selectedPOC);
+			Request r = Request.fromHTTPRequestResponse(ihrr, this.burpExtenderCallbacks.getHelpers());
+			byte[] poc = pg.generate(r);
+			PocCreatorTab pct = new PocCreatorTab(this.burpExtenderCallbacks, ihrr, this.pocs, poc);
+			pct.setSelectedItem(selectedPOC);
+			this.pocTabManager.addTab(String.valueOf(this.tabCount++), pct);
 		}
 	}
 

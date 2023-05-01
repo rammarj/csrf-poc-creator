@@ -16,21 +16,6 @@ public class Parameter implements IParameter {
     protected String value;
     protected byte type;
 
-    /** Sets the name of this parameter.
-     * @param name the name of the parameter.
-     */
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    /**
-     * Sets the value of this parameter.
-     * @param value the value of thos parameter.
-     */
-    public void setValue(String value) {
-        this.value = value;
-    }
-
     /**
      * Types of parameters.
      */
@@ -56,10 +41,24 @@ public class Parameter implements IParameter {
      * Constructs a new parameter with empty name, value and PARAM_URL as its type.
      */
     public Parameter() {
-        this.name = "";
-        this.value = "";
-        this.type = PARAM_URL;
+        this("", "", PARAM_URL);
     }
+
+    /** Sets the name of this parameter.
+     * @param name the name of the parameter.
+     */
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    /**
+     * Sets the value of this parameter.
+     * @param value the value of thos parameter.
+     */
+    public void setValue(String value) {
+        this.value = value;
+    }
+    
     /**
      * Deprecated
      * Deprecated. Use {@link #getParameterType() } instead.
